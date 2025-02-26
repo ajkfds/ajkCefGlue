@@ -19,4 +19,8 @@ public partial class MainWindow : Window
         }
     }
 
+    private void GoButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+
+    }
 }

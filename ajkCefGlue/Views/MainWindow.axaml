@@ -11,6 +11,7 @@
         Title="ajkCefGlue">
 	<DockPanel>
 		<TextBox x:Name="addressTextBox" DockPanel.Dock="Top" KeyDown="TextBox_KeyDown" />
+		<Button x:Name="goButton" Content="Go" DockPanel.Dock="Top" Click="GoButton_Click"/>
     	<browser:BrowserControl Name="browser" />
 	</DockPanel>
 </Window>

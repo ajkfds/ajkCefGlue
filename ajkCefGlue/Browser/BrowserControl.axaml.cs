@@ -24,6 +24,7 @@ public partial class BrowserControl : UserControl
         InitializeComponent();
 
         var browserWrapper = this.FindControl<Decorator>("browserWrapper");
+        if (browserWrapper == null) throw new Exception();
 
         browser = new AvaloniaCefBrowser();
         browser.Address = "https://search.yahoo.co.jp/realtime";
