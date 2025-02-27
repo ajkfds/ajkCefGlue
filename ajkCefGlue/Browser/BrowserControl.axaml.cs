@@ -12,6 +12,8 @@ using Avalonia;
 using Xilium.CefGlue.Avalonia;
 using Xilium.CefGlue.Common.Handlers;
 using Xilium.CefGlue.Common.Events;
+using Avalonia.Win32.Interop.Automation;
+using Xilium.CefGlue;
 
 
 namespace ajkCefGlue.Browser;
@@ -27,7 +29,7 @@ public partial class BrowserControl : UserControl
         if (browserWrapper == null) throw new Exception();
 
         browser = new AvaloniaCefBrowser();
-        browser.Address = "https://search.yahoo.co.jp/realtime";
+//        browser.Address = "https://search.yahoo.co.jp/realtime";
 //        browser.Address = "https://www.google.com";
         browser.RegisterJavascriptObject(new BindingTestClass(), "boundBeforeLoadObject");
         //            browser.LoadStart += OnBrowserLoadStart;
@@ -35,6 +37,43 @@ public partial class BrowserControl : UserControl
         //            browser.LifeSpanHandler = new BrowserLifeSpanHandler();
         browserWrapper.Child = browser;
         browser.LoadingStateChange += OnLoadingStateChanged;
+    }
+
+    private volatile bool working = false;
+
+    public async Task NavigateAsync(string url)
+    {
+        browser.Address = url;
+        if(browser.IsLoading) await Task.Delay(10);
+    }
+
+
+    public async Task<string> GetHtml()
+    {
+        string ret = await browser.EvaluateJavaScript<string>("document.documentElement.outerHTML");
+        return ret;
+    }
+
+    public string Url
+    {
+        get => browser.Address;
+    }
+
+    public string DocumentTitle
+    {
+        get { return browser.Title; }
+    }
+
+    public async Task<bool> ExecuteScriptAsync(string script)
+    {
+        string ret = await browser.EvaluateJavaScript<string>(script);
+        if(ret=="null") return false;
+        return true;
+    }
+
+    public async Task<string> EvaluateScriptAsync(string script)
+    {
+        return await browser.EvaluateJavaScript<string>(script);
     }
 
     private void OnLoadingStateChanged(object sender, LoadingStateChangeEventArgs e)
@@ -46,17 +85,16 @@ public partial class BrowserControl : UserControl
         }
     }
 
-
     public string Address
     {
         get => browser.Address;
-        set => browser.Address = value;
     }
 
     private void TextBox_KeyDown(object? sender, Avalonia.Input.KeyEventArgs e)
     {
 
     }
+
 
     static Task<object> AsyncCallNativeMethod(Func<object> nativeMethod)
     {
@@ -99,13 +137,6 @@ public partial class BrowserControl : UserControl
     //    });
     //}
 
-    private void OnAddressTextBoxKeyDown(object sender, global::Avalonia.Input.KeyEventArgs e)
-    {
-        if (e.Key == Key.Enter)
-        {
-            browser.Address = ((TextBox)sender).Text;
-        }
-    }
 
     public async void EvaluateJavascript()
     {

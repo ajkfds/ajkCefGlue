@@ -15,7 +15,7 @@ public partial class MainWindow : Window
         {
             string? address = addressTextBox.Text;
             if (address == null) return;
-            browser.Address = address;
+            browser.NavigateAsync(address);
         }
     }
 
