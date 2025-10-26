@@ -44,12 +44,72 @@ public partial class BrowserControl : UserControl
     public async Task NavigateAsync(string url)
     {
         browser.Address = url;
-        if(browser.IsLoading) await Task.Delay(10);
+        await WaitForLoadAsync();
+        if (browser.IsLoading) await Task.Delay(10);
+    }
+    public async Task LoadLocalHtml(string path)
+    {
+        browser.Address = new Uri(path).AbsoluteUri;
+        await WaitForLoadAsync();
+//        if (browser.IsLoading) await Task.Delay(10);
     }
 
+    public async Task WaitForLoadAsync()
+    {
+        if (browser == null)
+            throw new ArgumentNullException(nameof(browser));
+
+        var tcs = new TaskCompletionSource<bool>();
+
+        LoadEndEventHandler handler = null!;
+
+        handler = (sender, e) =>
+        {
+            browser.LoadEnd -= handler;
+            tcs.TrySetResult(true);
+        };
+
+        browser.LoadEnd += handler;
+        // Ç∑Ç≈Ç…ÉçÅ[ÉhäÆóπçœÇ›Ç»ÇÁë¶èIóπ
+        if (!browser.IsLoading)
+        {
+            browser.LoadEnd -= handler;
+            return;
+        }
+        await tcs.Task.ConfigureAwait(false);
+    }
+
+    private static void Browser_LoadEnd(object sender, LoadEndEventArgs e)
+    {
+        throw new NotImplementedException();
+    }
 
     public async Task<string> GetHtml()
     {
+        //var result = new StringWriter();
+
+        //string a0= await browser.EvaluateJavaScript<string>("return \"Hello World!\"");
+
+        //int a1= await browser.EvaluateJavaScript<int>("return 1+1");
+
+        //result.Write("; " + await browser.EvaluateJavaScript<bool>("return false"));
+
+        //result.Write("; " + await browser.EvaluateJavaScript<double>("return 1.5+1.5"));
+
+        //result.Write("; " + await browser.EvaluateJavaScript<double>("return 3+1.5"));
+
+        //        result.Write("; " + await browser.EvaluateJavaScript<DateTime>("return new Date()"));
+
+        //        result.Write("; " + string.Join(", ", await browser.EvaluateJavaScript<object[]>("return [1, 2, 3]")));
+
+        //        result.Write("; " + string.Join(", ", (await browser.EvaluateJavaScript<ExpandoObject>("return (function() { return { a: 'valueA', b: 1, c: true } })()")).Select(p => p.Key + ":" + p.Value)));
+
+        //        browser.ExecuteJavaScript($"alert(\"{result.ToString().Replace("\r\n", " | ").Replace("\"", "\\\"")}\")");
+
+        //string test = result.ToString();
+
+
+
         string ret = await browser.EvaluateJavaScript<string>("document.documentElement.outerHTML");
         return ret;
     }
