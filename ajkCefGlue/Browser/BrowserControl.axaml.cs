@@ -29,15 +29,14 @@ public partial class BrowserControl : UserControl
         if (browserWrapper == null) throw new Exception();
 
         browser = new AvaloniaCefBrowser();
-//        browser.Address = "https://search.yahoo.co.jp/realtime";
-//        browser.Address = "https://www.google.com";
         browser.RegisterJavascriptObject(new BindingTestClass(), "boundBeforeLoadObject");
-        //            browser.LoadStart += OnBrowserLoadStart;
         browser.TitleChanged += OnBrowserTitleChanged;
-        //            browser.LifeSpanHandler = new BrowserLifeSpanHandler();
         browserWrapper.Child = browser;
         browser.LoadingStateChange += OnLoadingStateChanged;
+        //browser.PointerWheelChanged += Browser_PointerWheelChanged;
+        //PointerWheelChanged += OnPointerWheelChanged;
     }
+
 
     private volatile bool working = false;
 
@@ -70,7 +69,7 @@ public partial class BrowserControl : UserControl
                 tcs.TrySetResult(true);
             }
         };
-
+        browser.ZoomLevel = -1;
         browser.LoadEnd += handler;
         if (!browser.IsLoading)
         {
