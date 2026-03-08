@@ -1,4 +1,4 @@
-﻿using ajkCefGlue.Views;
+using ajkCefGlue.Views;
 
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
