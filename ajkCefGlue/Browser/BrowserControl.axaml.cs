@@ -12,7 +12,7 @@ using Avalonia;
 using Xilium.CefGlue.Avalonia;
 using Xilium.CefGlue.Common.Handlers;
 using Xilium.CefGlue.Common.Events;
-using Avalonia.Win32.Interop.Automation;
+//using Avalonia.Win32.Interop.Automation;
 using Xilium.CefGlue;
 
 
